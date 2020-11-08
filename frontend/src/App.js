@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import {
   BrowserRouter as Router,
   Route,
@@ -13,8 +13,7 @@ import Header from './components/Header';
 import QuizView from './components/QuizView';
 
 
-class App extends Component {
-  render() {
+function App() {
     return (
     <div className="App">
       <Header path />
@@ -29,7 +28,7 @@ class App extends Component {
     </div>
   );
 
-  }
+
 }
 
 export default App;

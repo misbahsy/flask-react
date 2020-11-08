@@ -1,26 +1,22 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import $ from 'jquery';
 
 import '../stylesheets/FormView.css';
 
-class FormView extends Component {
-  constructor(props){
-    super();
-    this.state = {
-      question: "",
-      answer: "",
-      difficulty: 1,
-      category: 1,
-      categories: {}
-    }
-  }
+function FormView() {
+  const [ question, setQuestion ] = useState('')
+  const [ answer, setAnswer ] = useState('')
+  const [ difficulty, setDifficulty ] = useState(1)
+  const [ category, setCategory] = useState(1)
+  const [ categories, setCategories] = useState({})
 
-  componentDidMount(){
+
+  useEffect( () => {
     $.ajax({
       url: `/categories`, //TODO: update request URL
       type: "GET",
       success: (result) => {
-        this.setState({ categories: result.categories })
+        setCategories( result.categories )
         return;
       },
       error: (error) => {
@@ -28,10 +24,10 @@ class FormView extends Component {
         return;
       }
     })
-  }
+  });
 
 
-  submitQuestion = (event) => {
+  const submitQuestion = (event) => {
     event.preventDefault();
     $.ajax({
       url: '/questions', //TODO: update request URL
@@ -39,10 +35,10 @@ class FormView extends Component {
       dataType: 'json',
       contentType: 'application/json',
       data: JSON.stringify({
-        question: this.state.question,
-        answer: this.state.answer,
-        difficulty: this.state.difficulty,
-        category: this.state.category
+        question: question,
+        answer: answer,
+        difficulty: difficulty,
+        category: category
       }),
       xhrFields: {
         withCredentials: true
@@ -59,26 +55,26 @@ class FormView extends Component {
     })
   }
 
-  handleChange = (event) => {
-    this.setState({[event.target.name]: event.target.value})
-  }
+  // handleChange = (event) => {
+  //   const { name, value } = event.target;
+  //   this.setState({[name]: value})
+  // }
 
-  render() {
     return (
       <div id="add-form">
         <h2>Add a New Trivia Question</h2>
-        <form className="form-view" id="add-question-form" onSubmit={this.submitQuestion}>
+        <form className="form-view" id="add-question-form" onSubmit={submitQuestion}>
           <label>
             Question
-            <input type="text" name="question" onChange={this.handleChange}/>
+            <input type="text" name="question" onChange={(e)=> setQuestion(e.target.value)}/>
           </label>
           <label>
             Answer
-            <input type="text" name="answer" onChange={this.handleChange}/>
+            <input type="text" name="answer" onChange={(e)=> setAnswer(e.target.value)}/>
           </label>
           <label>
             Difficulty
-            <select name="difficulty" onChange={this.handleChange}>
+            <select name="difficulty" onChange={(e)=> setDifficulty(e.target.value)}>
               <option value="1">1</option>
               <option value="2">2</option>
               <option value="3">3</option>
@@ -88,10 +84,10 @@ class FormView extends Component {
           </label>
           <label>
             Category
-            <select name="category" onChange={this.handleChange}>
-              {Object.keys(this.state.categories).map(id => {
+            <select name="category" onChange={(e)=> setCategory(e.target.value)}>
+              {Object.keys(categories).map(id => {
                   return (
-                    <option key={id} value={id}>{this.state.categories[id]}</option>
+                    <option key={id} value={id}>{categories[id]}</option>
                   )
                 })}
             </select>
@@ -100,7 +96,6 @@ class FormView extends Component {
         </form>
       </div>
     );
-  }
 }
 
 export default FormView;
